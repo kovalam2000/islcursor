@@ -5,8 +5,8 @@ A comprehensive Python web application for analyzing interlink communication win
 ## 🌟 Features
 
 - **TLE Processing**: Upload and process Two-Line Element (TLE) data for satellites
-- **Orbital Calculations**: Advanced orbital mechanics using the `ephem` library
-- **Earth Obstruction Detection**: Accounts for Earth blocking line-of-sight between satellites
+- **Orbital Calculations**: Accurate SGP4 propagation via Skyfield
+- **Earth Obstruction Detection**: Geometric line-of-sight check in ECI
 - **3D Visualization**: Interactive 3D visualization using Three.js
 - **Communication Windows**: Calculate optimal communication time windows
 - **Modern Web Interface**: Responsive design with Bootstrap and custom CSS
@@ -16,7 +16,7 @@ A comprehensive Python web application for analyzing interlink communication win
 
 - **Backend**: Flask Python web framework
 - **Frontend**: HTML5, CSS3, JavaScript with Three.js for 3D graphics
-- **Orbital Mechanics**: PyEphem library for satellite position calculations
+- **Orbital Mechanics**: Skyfield + SGP4 for satellite propagation and WGS84 geodetics
 - **Containerization**: Docker for easy deployment
 - **Cloud Ready**: AWS ECS deployment configuration included
 
@@ -88,23 +88,22 @@ A comprehensive Python web application for analyzing interlink communication win
 
 ### Orbital Calculations
 
-The application uses the SGP4/SDP4 orbital propagation models through the `ephem` library:
+The application uses the SGP4 orbital propagation model via Skyfield:
 
-- **Position Calculation**: Computes satellite positions at specific times
-- **Distance Calculation**: Haversine formula for ground track distances
-- **Earth Obstruction**: Simplified model checking line-of-sight blockage
+- **Position Calculation**: ECI vectors from TLEs, converted to geodetic lat/lon/alt on WGS84
+- **Distance Calculation**: 3D Euclidean distance in ECI
+- **Earth Obstruction**: Closest approach from origin to the line segment between satellites
 - **Communication Range**: Configurable maximum communication distance (default: 1000 km)
 
 ### Earth Obstruction Model
 
-The current implementation uses a simplified heuristic:
-- For Low Earth Orbit (LEO) satellites: Maximum distance of 2000 km
-- More sophisticated models can be implemented for higher accuracy
+The current implementation performs a geometric line-of-sight check:
+- If the minimum distance from Earth's center to the line segment between satellites is less than Earth's radius, LoS is blocked
 
 ### Performance Considerations
 
 - **Time Step**: Default 5-minute intervals for calculations
-- **Optimization**: Efficient orbital propagation algorithms
+- **Optimization**: Efficient SGP4 propagation and vectorized math
 - **Scalability**: Designed for real-time analysis of multiple satellites
 
 ## 🚀 AWS Deployment
@@ -199,10 +198,10 @@ satellite-interlink/
 
 ### Adding Features
 
-1. **New Orbital Models**: Extend the `Satellite` class
-2. **Enhanced Visualization**: Modify Three.js scene in `app.js`
-3. **Additional Calculations**: Add new endpoints in `app.py`
-4. **UI Improvements**: Update HTML templates and CSS
+1. **Orbit Animation**: Return time series to the frontend and animate orbits
+2. **Dynamic Range Models**: Frequency- and antenna-dependent link budget checks
+3. **Additional Calculations**: Add Doppler, AOS/LOS, elevation constraints
+4. **UI Improvements**: Enhance visualization and interaction
 
 ## 🤝 Contributing
 
@@ -218,7 +217,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- **PyEphem**: Orbital mechanics calculations
+- **Skyfield** and **SGP4**: Satellite propagation
 - **Three.js**: 3D visualization library
 - **Flask**: Web framework
 - **Bootstrap**: UI components
