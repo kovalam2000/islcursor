@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satellite Interlink Communication Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-satellite"></i> Satellite Interlink Analyzer
+                </a>
+            </div>
+        </nav>
+
+        <div class="row mt-4">
+            <!-- Input Panel -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-upload"></i> Upload Satellite TLE Data</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="tleForm">
+                            <!-- Satellite 1 -->
+                            <div class="mb-3">
+                                <label class="form-label">Satellite 1</label>
+                                <input type="text" class="form-control" id="sat1Name" placeholder="Satellite Name" value="ISS">
+                                <textarea class="form-control mt-2" id="sat1TLE1" rows="2" placeholder="TLE Line 1">1 25544U 98067A   24001.50000000  .00012227  00000+0  22906-3 0  9999</textarea>
+                                <textarea class="form-control mt-2" id="sat1TLE2" rows="2" placeholder="TLE Line 2">2 25544  51.6400 114.3973 0001263 255.8500 104.1500 15.50000000 00000+0</textarea>
+                            </div>
+
+                            <!-- Satellite 2 -->
+                            <div class="mb-3">
+                                <label class="form-label">Satellite 2</label>
+                                <input type="text" class="form-control" id="sat2Name" placeholder="Satellite Name" value="STARLINK-1234">
+                                <textarea class="form-control mt-2" id="sat2TLE1" rows="2" placeholder="TLE Line 1">1 44713U 19074A   24001.50000000  .00000000  00000+0  00000+0 0  9999</textarea>
+                                <textarea class="form-control mt-2" id="sat2TLE2" rows="2" placeholder="TLE Line 2">2 44713  52.9979 288.0000 0001263 180.0000 180.0000 15.05425952 00000+0</textarea>
+                            </div>
+
+                            <!-- Date Range -->
+                            <div class="mb-3">
+                                <label class="form-label">Analysis Period</label>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="datetime-local" class="form-control" id="startDate">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="datetime-local" class="form-control" id="endDate">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-calculator"></i> Calculate Interlink Windows
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Results Summary -->
+                <div class="card mt-3" id="resultsCard" style="display: none;">
+                    <div class="card-header">
+                        <h6><i class="fas fa-chart-bar"></i> Analysis Results</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="resultsSummary"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Panel -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-globe"></i> 3D Visualization</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="visualization" style="height: 600px; background: #000;">
+                            <div class="text-center text-white pt-5">
+                                <i class="fas fa-satellite fa-3x mb-3"></i>
+                                <p>Enter TLE data and click "Calculate" to visualize satellite positions and interlink windows</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interlink Windows Table -->
+                <div class="card mt-3" id="windowsCard" style="display: none;">
+                    <div class="card-header">
+                        <h6><i class="fas fa-clock"></i> Interlink Communication Windows</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Distance (km)</th>
+                                        <th>Sat1 Lat/Lon</th>
+                                        <th>Sat2 Lat/Lon</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="windowsTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Calculating interlink windows...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
